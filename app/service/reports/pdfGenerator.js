@@ -3,12 +3,17 @@ const chromium = require("@sparticuz/chromium");
 
 async function generatePDF(html) {
   try {
-    console.log("Launching Chromium...");
-
     const browser = await puppeteer.launch({
-      args: chromium.args,
+      args: [
+        ...chromium.args,
+        "--no-sandbox",
+        "--disable-setuid-sandbox"
+      ],
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
+
+      // 🔥 THIS FIXES ETXTBSY
+      userDataDir: "/tmp/chromium",
     });
 
     const page = await browser.newPage();
