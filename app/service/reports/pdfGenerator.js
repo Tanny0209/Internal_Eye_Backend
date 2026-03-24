@@ -1,31 +1,32 @@
 const puppeteer = require("puppeteer");
 
 async function generatePDF(html) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-gpu"
-    ],
-  });
+  try {
+    console.log("Starting PDF generation...");
 
-  const page = await browser.newPage();
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
 
-  await page.setContent(html, {
-    waitUntil: "domcontentloaded",
-  });
+    const page = await browser.newPage();
 
-  await new Promise(resolve => setTimeout(resolve, 3000));
+    console.log("Setting HTML content...");
+    await page.setContent(html, {
+      waitUntil: "domcontentloaded",
+    });
 
- const pdf = await page.pdf({
-  format: "A4",
-  printBackground: true,
-});
+    console.log("Closing browser...");
+    await browser.close();
 
-await browser.close();
-return pdf;
+    // 🔥 DEBUG: bypass puppeteer PDF generation
+    console.log("Returning dummy buffer...");
+    return Buffer.from("hello");
+
+  } catch (err) {
+    console.error("PDF GENERATION ERROR:", err);
+    throw err;
+  }
 }
 
-module.exports = { generatePDF };
+module.exports = { generatePDF };asdf
