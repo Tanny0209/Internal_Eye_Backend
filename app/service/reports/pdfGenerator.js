@@ -1,45 +1,42 @@
 const puppeteer = require("puppeteer-core");
 const chromium = require("@sparticuz/chromium");
-const fs = require("fs");
-const path = require("path");
+
+let browserInstance = null; // 🔥 reuse browser
+
+async function getBrowser() {
+  if (browserInstance) return browserInstance;
+
+  browserInstance = await puppeteer.launch({
+    args: [
+      ...chromium.args,
+      "--no-sandbox",
+      "--disable-setuid-sandbox"
+    ],
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
+
+  return browserInstance;
+}
 
 async function generatePDF(html) {
   try {
-    // 🔥 Get original chromium path
-    const executablePath = await chromium.executablePath();
-
-    // 🔥 Copy to /tmp to avoid ETXTBSY
-    const tmpPath = "/tmp/chromium";
-
-    if (!fs.existsSync(tmpPath)) {
-      fs.copyFileSync(executablePath, tmpPath);
-      fs.chmodSync(tmpPath, 0o755);
-    }
-
-    const browser = await puppeteer.launch({
-      args: [
-        ...chromium.args,
-        "--no-sandbox",
-        "--disable-setuid-sandbox"
-      ],
-      executablePath: tmpPath, // ✅ use copied binary
-      headless: chromium.headless,
-    });
-
+    const browser = await getBrowser(); // ✅ reuse
     const page = await browser.newPage();
 
     await page.setContent(html, {
       waitUntil: "domcontentloaded",
     });
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    // 🔥 reduce delay
+    await new Promise(resolve => setTimeout(resolve, 800));
 
     const pdf = await page.pdf({
       format: "A4",
       printBackground: true,
     });
 
-    await browser.close();
+    await page.close(); // ✅ close page, NOT browser
 
     return pdf;
 
