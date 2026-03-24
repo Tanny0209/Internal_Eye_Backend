@@ -1,19 +1,29 @@
 const puppeteer = require("puppeteer-core");
 const chromium = require("@sparticuz/chromium");
+const fs = require("fs");
+const path = require("path");
 
 async function generatePDF(html) {
   try {
+    // 🔥 Get original chromium path
+    const executablePath = await chromium.executablePath();
+
+    // 🔥 Copy to /tmp to avoid ETXTBSY
+    const tmpPath = "/tmp/chromium";
+
+    if (!fs.existsSync(tmpPath)) {
+      fs.copyFileSync(executablePath, tmpPath);
+      fs.chmodSync(tmpPath, 0o755);
+    }
+
     const browser = await puppeteer.launch({
       args: [
         ...chromium.args,
         "--no-sandbox",
         "--disable-setuid-sandbox"
       ],
-      executablePath: await chromium.executablePath(),
+      executablePath: tmpPath, // ✅ use copied binary
       headless: chromium.headless,
-
-      // 🔥 THIS FIXES ETXTBSY
-      userDataDir: "/tmp/chromium",
     });
 
     const page = await browser.newPage();
