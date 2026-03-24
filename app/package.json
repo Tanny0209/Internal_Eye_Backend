@@ -4,9 +4,8 @@
   "description": "",
   "main": "db.js",
   "scripts": {
-    "postinstall": "npx puppeteer browsers install chrome",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start": "node server.js",
+    "postinstall": "PUPPETEER_SKIP_DOWNLOAD=false npx puppeteer browsers install chrome"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +15,6 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "mongoose": "^9.3.2",
-    "puppeteer": "^24.40.0"
+    "puppeteer": "^22.15.0"
   }
 }
