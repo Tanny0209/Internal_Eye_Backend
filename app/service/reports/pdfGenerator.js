@@ -29,4 +29,4 @@ async function generatePDF(html) {
   }
 }
 
-module.exports = { generatePDF };asdf
+module.exports = { generatePDF };
