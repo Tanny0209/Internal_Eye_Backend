@@ -1,11 +1,10 @@
-const puppeteer = require("puppeteer-core");
+const puppeteer = require("puppeteer");
 
 async function generatePDF(html) {
   try {
-    console.log("Launching Chromium...");
+    console.log("Launching browser...");
 
     const browser = await puppeteer.launch({
-      executablePath: "/usr/bin/chromium", // ✅ Render path
       headless: true,
       args: [
         "--no-sandbox",
@@ -17,12 +16,11 @@ async function generatePDF(html) {
 
     const page = await browser.newPage();
 
-    console.log("Loading HTML...");
+    console.log("Setting content...");
     await page.setContent(html, {
       waitUntil: "domcontentloaded",
     });
 
-    // wait for charts/rendering
     await new Promise(resolve => setTimeout(resolve, 2000));
 
     console.log("Generating PDF...");
@@ -33,7 +31,6 @@ async function generatePDF(html) {
 
     await browser.close();
 
-    console.log("PDF success!");
     return pdf;
 
   } catch (err) {
