@@ -1,19 +1,14 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-core");
+const chromium = require("@sparticuz/chromium");
 
 async function generatePDF(html) {
   try {
-    console.log("Launching browser...");
+    console.log("Launching Chromium...");
 
     const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        "--no-sandbox",
-        "--disable-setuid-sandbox",
-        "--disable-dev-shm-usage",
-        "--disable-gpu"
-      ],
-      // 🔥 THIS LINE FIXES EVERYTHING
-      executablePath: puppeteer.executablePath(),
+      args: chromium.args,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
     });
 
     const page = await browser.newPage();
@@ -30,6 +25,7 @@ async function generatePDF(html) {
     });
 
     await browser.close();
+
     return pdf;
 
   } catch (err) {
