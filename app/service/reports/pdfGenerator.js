@@ -19,13 +19,13 @@ async function generatePDF(html) {
 
   await new Promise(resolve => setTimeout(resolve, 3000));
 
-  const pdf = await page.pdf({
-    format: "A4",
-    printBackground: true,
-  });
+ const pdf = await page.pdf({
+  format: "A4",
+  printBackground: true,
+});
 
-  await browser.close();
-  return pdf;
+await browser.close();
+return pdf;
 }
 
 module.exports = { generatePDF };
