@@ -5,7 +5,7 @@
   "main": "db.js",
   "scripts": {
     "start": "node server.js",
-    "postinstall": "PUPPETEER_SKIP_DOWNLOAD=false npx puppeteer browsers install chrome"
+    "postinstall": "npx puppeteer browsers install chrome"
   },
   "keywords": [],
   "author": "",

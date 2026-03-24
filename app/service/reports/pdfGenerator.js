@@ -2,29 +2,35 @@ const puppeteer = require("puppeteer");
 
 async function generatePDF(html) {
   try {
-    console.log("Starting PDF generation...");
-
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath: "/opt/render/.cache/puppeteer/chrome/linux-127.0.6533.88/chrome-linux64/chrome", // 🔥 FIX
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage",
+        "--disable-gpu"
+      ],
     });
 
     const page = await browser.newPage();
 
-    console.log("Setting HTML content...");
     await page.setContent(html, {
       waitUntil: "domcontentloaded",
     });
 
-    console.log("Closing browser...");
-    await browser.close();
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
-    // 🔥 DEBUG: bypass puppeteer PDF generation
-    console.log("Returning dummy buffer...");
-    return Buffer.from("hello");
+    const pdf = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    });
+
+    await browser.close();
+    return pdf;
 
   } catch (err) {
-    console.error("PDF GENERATION ERROR:", err);
+    console.error("PDF ERROR:", err);
     throw err;
   }
 }
