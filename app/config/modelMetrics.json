@@ -1,0 +1,10 @@
+{
+  "gnnAccuracy": 94.42,
+  "intentAccuracy": 92.1,
+  "sentimentAccuracy": 95.0,
+  "fusionWeights": {
+    "intent": 0.4,
+    "sentiment": 0.2,
+    "graph": 0.4
+  }
+}
